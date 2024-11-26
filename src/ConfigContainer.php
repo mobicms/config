@@ -11,8 +11,14 @@ use function is_array;
 
 class ConfigContainer implements ConfigInterface
 {
+    /**
+     * @var array<array-key, mixed>
+     */
     private array $data;
 
+    /**
+     * @param array<array-key, mixed> $data
+     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -23,6 +29,9 @@ class ConfigContainer implements ConfigInterface
         return array_key_exists($key, $this->data);
     }
 
+    /**
+     * @param string|array<mixed> $key
+     */
     public function get(string|array $key, mixed $default = null): mixed
     {
         if (is_array($key)) {
