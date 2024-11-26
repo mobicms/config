@@ -6,21 +6,15 @@ namespace MobicmsTest\Config;
 
 use Mobicms\Config\ConfigContainer;
 use Mobicms\Config\Exception\KeyAlreadyExistsException;
-use Mobicms\Config\ConfigInterface;
 use PHPUnit\Framework\TestCase;
 
 class ConfigContainerTest extends TestCase
 {
-    public function testImplementsConfigInterface(): void
-    {
-        $this->assertInstanceOf(ConfigInterface::class, new ConfigContainer());
-    }
-
     public function testHasMethod(): void
     {
         $config = new ConfigContainer(['foo' => 'bar']);
-        $this->assertTrue($config->has('foo'));
-        $this->assertFalse($config->has('baz'));
+        self::assertTrue($config->has('foo'));
+        self::assertFalse($config->has('baz'));
     }
 
     public function testGetMethod(): void
@@ -36,29 +30,29 @@ class ConfigContainerTest extends TestCase
             ],
         ];
         $config = new ConfigContainer($data);
-        $this->assertSame(12345, $config->get('int'));
-        $this->assertSame('teststring', $config->get('string'));
-        $this->assertIsArray($config->get('array'));
+        self::assertSame(12345, $config->get('int'));
+        self::assertSame('teststring', $config->get('string'));
+        self::assertIsArray($config->get('array'));
 
         // Nested data
-        $this->assertSame('bar', $config->get(['array', 'foo']));
-        $this->assertSame('bat', $config->get(['array', 'nested', 'baz']));
+        self::assertSame('bar', $config->get(['array', 'foo']));
+        self::assertSame('bat', $config->get(['array', 'nested', 'baz']));
     }
 
     public function testGetMethodCanReturnDefaultData(): void
     {
         $config = new ConfigContainer();
-        $this->assertNull($config->get('foo'));
-        $this->assertSame('string', $config->get('foo', 'string'));
-        $this->assertSame(12345, $config->get('foo', 12345));
-        $this->assertSame('string', $config->get(['foo', 'bar'], 'string'));
-        $this->assertSame(12345, $config->get(['foo', 'bar'], 12345));
+        self::assertNull($config->get('foo'));
+        self::assertSame('string', $config->get('foo', 'string'));
+        self::assertSame(12345, $config->get('foo', 12345));
+        self::assertSame('string', $config->get(['foo', 'bar'], 'string'));
+        self::assertSame(12345, $config->get(['foo', 'bar'], 12345));
     }
 
     public function testSetMethod(): void
     {
         $config = new ConfigContainer();
-        $this->assertFalse($config->has('string'));
+        self::assertFalse($config->has('string'));
         $config->set('string', 'test');
         $config->set('int', 12345);
         $config->set(
@@ -70,10 +64,10 @@ class ConfigContainerTest extends TestCase
                 ],
             ]
         );
-        $this->assertSame('test', $config->get('string'));
-        $this->assertSame(12345, $config->get('int'));
-        $this->assertIsArray($config->get('array'));
-        $this->assertSame('bat', $config->get(['array', 'nested', 'baz']));
+        self::assertSame('test', $config->get('string'));
+        self::assertSame(12345, $config->get('int'));
+        self::assertIsArray($config->get('array'));
+        self::assertSame('bat', $config->get(['array', 'nested', 'baz']));
     }
 
     public function testSetMethodThrowExceptionOnExistingKey(): void
@@ -86,8 +80,8 @@ class ConfigContainerTest extends TestCase
     public function testUnsetMethod(): void
     {
         $config = new ConfigContainer(['foo' => 'bar']);
-        $this->assertTrue($config->has('foo'));
+        self::assertTrue($config->has('foo'));
         $config->unset('foo');
-        $this->assertFalse($config->has('foo'));
+        self::assertFalse($config->has('foo'));
     }
 }
