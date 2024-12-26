@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mobicms\Config;
 
+/** @psalm-api */
 interface ConfigInterface
 {
     public function has(string $key): bool;

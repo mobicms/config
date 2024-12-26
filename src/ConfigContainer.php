@@ -9,6 +9,7 @@ use Mobicms\Config\Exception\KeyAlreadyExistsException;
 use function array_key_exists;
 use function is_array;
 
+/** @psalm-api */
 class ConfigContainer implements ConfigInterface
 {
     /**

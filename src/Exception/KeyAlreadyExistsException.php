@@ -6,7 +6,7 @@ namespace Mobicms\Config\Exception;
 
 use InvalidArgumentException;
 
-class KeyAlreadyExistsException extends InvalidArgumentException
+final class KeyAlreadyExistsException extends InvalidArgumentException
 {
     public function __construct(string $key)
     {
