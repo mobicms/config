@@ -25,6 +25,7 @@ class ConfigContainer implements ConfigInterface
         $this->data = $data;
     }
 
+    #[\Override]
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
@@ -33,6 +34,7 @@ class ConfigContainer implements ConfigInterface
     /**
      * @param string|array<mixed> $key
      */
+    #[\Override]
     public function get(string|array $key, mixed $default = null): mixed
     {
         if (is_array($key)) {
@@ -56,6 +58,7 @@ class ConfigContainer implements ConfigInterface
             : $default;
     }
 
+    #[\Override]
     public function set(string $key, mixed $value): void
     {
         if (array_key_exists($key, $this->data)) {
@@ -65,6 +68,7 @@ class ConfigContainer implements ConfigInterface
         $this->data[$key] = $value;
     }
 
+    #[\Override]
     public function unset(string $key): void
     {
         unset($this->data[$key]);
