@@ -2,16 +2,14 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
-         executionOrder="depends,defects"
+         colors="true"
          failOnRisky="true"
          failOnWarning="true"
-         colors="true"
-         cacheDirectory=".cache"
          beStrictAboutCoverageMetadata="true">
 
     <testsuites>
         <testsuite name="default">
-            <directory>tests/unit</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 
