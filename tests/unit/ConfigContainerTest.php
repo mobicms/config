@@ -2,86 +2,83 @@
 
 declare(strict_types=1);
 
-namespace MobicmsTest\Config;
-
 use Mobicms\Config\ConfigContainer;
 use Mobicms\Config\Exception\KeyAlreadyExistsException;
-use PHPUnit\Framework\TestCase;
 
-class ConfigContainerTest extends TestCase
-{
-    public function testHasMethod(): void
-    {
-        $config = new ConfigContainer(['foo' => 'bar']);
-        self::assertTrue($config->has('foo'));
-        self::assertFalse($config->has('baz'));
-    }
+test('Has method', function () {
+    $config = new ConfigContainer(['foo' => 'bar']);
 
-    public function testGetMethod(): void
-    {
-        $data = [
-            'int'    => 12345,
-            'string' => 'teststring',
-            'array'  => [
-                'foo'    => 'bar',
-                'nested' => [
-                    'baz' => 'bat',
-                ],
+    expect($config->has('foo'))->toBeTrue();
+    expect($config->has('baz'))->toBeFalse();
+});
+
+test('Get method can return flat data', function () {
+    $data = [
+        'int'    => 12345,
+        'string' => 'teststring',
+        'array'  => ['test'],
+        'bool'   => true,
+    ];
+    $config = new ConfigContainer($data);
+
+    expect($config->get('int'))->toEqual(12345)
+        ->and($config->get('string'))->toEqual('teststring')
+        ->and($config->get('array'))->toEqual(['test'])
+        ->and($config->get('bool'))->toBeTrue();
+});
+
+test('Get method can return nested array data', function () {
+    $data = [
+        'array' => [
+            'foo'    => 'bar',
+            'nested' => [
+                'baz' => 'bat',
             ],
-        ];
-        $config = new ConfigContainer($data);
-        self::assertSame(12345, $config->get('int'));
-        self::assertSame('teststring', $config->get('string'));
-        self::assertIsArray($config->get('array'));
+        ],
+    ];
+    $config = new ConfigContainer($data);
 
-        // Nested data
-        self::assertSame('bar', $config->get(['array', 'foo']));
-        self::assertSame('bat', $config->get(['array', 'nested', 'baz']));
-    }
+    expect($config->get(['array', 'foo']))->toBe('bar')
+        ->and($config->get(['array', 'nested', 'baz']))->toBe('bat');
+});
 
-    public function testGetMethodCanReturnDefaultData(): void
-    {
-        $config = new ConfigContainer();
-        self::assertNull($config->get('foo'));
-        self::assertSame('string', $config->get('foo', 'string'));
-        self::assertSame(12345, $config->get('foo', 12345));
-        self::assertSame('string', $config->get(['foo', 'bar'], 'string'));
-        self::assertSame(12345, $config->get(['foo', 'bar'], 12345));
-    }
+test('Get method can return default value', function () {
+    $config = new ConfigContainer();
 
-    public function testSetMethod(): void
-    {
-        $config = new ConfigContainer();
-        self::assertFalse($config->has('string'));
-        $config->set('string', 'test');
-        $config->set('int', 12345);
-        $config->set(
-            'array',
-            [
-                'foo'    => 'bar',
-                'nested' => [
-                    'baz' => 'bat',
-                ],
-            ]
-        );
-        self::assertSame('test', $config->get('string'));
-        self::assertSame(12345, $config->get('int'));
-        self::assertIsArray($config->get('array'));
-        self::assertSame('bat', $config->get(['array', 'nested', 'baz']));
-    }
+    expect($config->get('foo'))->toBeNull()
+        ->and($config->get('foo', 'string'))->toEqual('string')
+        ->and($config->get('foo', 12345))->toEqual(12345)
+        ->and($config->get('foo', true))->toBeTrue()
+        ->and($config->get(['foo', 'bar'], 'string'))->toEqual('string');
+});
 
-    public function testSetMethodThrowExceptionOnExistingKey(): void
-    {
+test('Set method can store data', function () {
+    $config = new ConfigContainer();
+    $config->set('string', 'test');
+    $config->set('int', 12345);
+    $config->set(
+        'array',
+        [
+            'foo' => 'bar',
+            'baz' => 'bat',
+        ]
+    );
+
+    expect($config->get('string'))->toEqual('test')
+        ->and($config->get('int'))->toEqual(12345)
+        ->and($config->get('array'))->toEqual(['foo' => 'bar', 'baz' => 'bat']);
+});
+
+test('Unset method', function () {
+    $config = new ConfigContainer(['foo' => 'bar']);
+    expect($config->has('foo'))->toBeTrue();
+    $config->unset('foo');
+    expect($config->has('foo'))->toBeFalse();
+});
+
+describe('Exception handling:', function () {
+    test('on existing key', function () {
         $config = new ConfigContainer(['foo' => 'bar']);
-        $this->expectException(KeyAlreadyExistsException::class);
         $config->set('foo', 'somedata');
-    }
-
-    public function testUnsetMethod(): void
-    {
-        $config = new ConfigContainer(['foo' => 'bar']);
-        self::assertTrue($config->has('foo'));
-        $config->unset('foo');
-        self::assertFalse($config->has('foo'));
-    }
-}
+    })->throws(KeyAlreadyExistsException::class);
+});
